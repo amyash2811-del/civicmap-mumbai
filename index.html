@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>CivicMap Mumbai — Report a Civic Issue</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="anonymous">
+<link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+<div class="app">
+<header class="topbar">
+  <div class="brand">
+    <div class="brandmark">CM</div>
+    <div><strong>CivicMap Mumbai</strong><span>Report · Track · Improve</span></div>
+  </div>
+  <nav id="mainNav">
+    <a href="#map">Map</a><a href="#report">Report</a><a href="#community">Community</a><a href="#dashboard">Dashboard</a><a href="#authority">BMC Officer</a><a href="#about">About</a>
+  </nav>
+  <div class="header-actions">
+    <button class="theme-toggle" id="themeToggle" type="button" onclick="toggleTheme()" aria-label="Switch theme">🌙 <span>Dark</span></button>
+    <button class="login" onclick="openReport()">Report an issue</button>
+    <button class="hamburger" id="menuToggle" type="button" onclick="toggleMobileMenu()" aria-label="Open navigation menu" aria-expanded="false"><span></span><span></span><span></span></button>
+  </div>
+</header>
+<section class="backend-panel" aria-label="Backend connection status">
+  <div class="backend-panel-copy"><span class="backend-dot" id="backendDot"></span><div><strong id="backendStatusTitle">Checking backend connection…</strong><p id="backendStatusText">Connecting to the CivicMap API and database.</p></div></div>
+  <div class="backend-metrics"><div><span>Saved reports</span><strong id="backendTotal">—</strong></div><div><span>Open reports</span><strong id="backendOpen">—</strong></div><div><span>Resolved</span><strong id="backendResolved">—</strong></div></div>
+  <a href="/docs" target="_blank" rel="noopener" class="backend-api-link">View API ↗</a>
+</section>
+<section class="hero">
+  <div class="hero-copy">
+    <div class="eyebrow">CIVIC ISSUES · MUMBAI</div>
+    <h1>Make your city<br><em>work better.</em></h1>
+    <p>Report potholes, garbage, drainage and other local problems in a few simple steps. Add the location, attach a photo and follow the complaint as it moves forward.</p>
+    <div class="hero-actions">
+      <button class="primary" onclick="openReport()">＋ Report an issue</button>
+      <button class="secondary" onclick="document.querySelector('#map').scrollIntoView({behavior:'smooth'})">Explore the map →</button>
+    </div>
+    <div class="micro"><span>●</span> A simpler way to report local problems</div>
+  </div>
+  <div class="hero-visual" aria-label="Illustrated neighbourhood infrastructure scene">
+    <div class="blob blob-a"></div><div class="blob blob-b"></div>
+    <svg class="city-art" viewBox="0 0 620 470" role="img" aria-hidden="true">
+      <path d="M55 375 C170 325 280 345 400 318 C485 298 550 305 610 282 L610 470 L55 470 Z" fill="#dfeaf8"/>
+      <path d="M0 405 C150 355 255 392 390 356 C485 331 548 340 620 317 L620 470 L0 470 Z" fill="#ffffff"/>
+      <path d="M85 378 L500 318 L545 342 L118 415 Z" fill="#f4b63f"/>
+      <path d="M112 395 L530 333" stroke="#ffffff" stroke-width="9" stroke-dasharray="22 18"/>
+      <rect x="160" y="170" width="132" height="192" rx="3" fill="#f8df55"/>
+      <rect x="184" y="193" width="28" height="30" fill="#ffffff"/><rect x="238" y="193" width="28" height="30" fill="#ffffff"/>
+      <rect x="184" y="246" width="28" height="30" fill="#ffffff"/><rect x="238" y="246" width="28" height="30" fill="#ffffff"/>
+      <rect x="184" y="299" width="28" height="30" fill="#ffffff"/><rect x="238" y="299" width="28" height="30" fill="#ffffff"/>
+      <rect x="335" y="204" width="112" height="158" rx="3" fill="#fff0a1"/>
+      <rect x="356" y="229" width="25" height="27" fill="#ffffff"/><rect x="401" y="229" width="25" height="27" fill="#ffffff"/>
+      <rect x="356" y="276" width="25" height="27" fill="#ffffff"/><rect x="401" y="276" width="25" height="27" fill="#ffffff"/>
+      <rect x="356" y="323" width="25" height="27" fill="#ffffff"/><rect x="401" y="323" width="25" height="27" fill="#ffffff"/>
+      <path d="M300 174 L405 78 L515 174" fill="#7391c7"/>
+      <path d="M392 91 L392 180" stroke="#ec6c35" stroke-width="10"/>
+      <path d="M392 96 L500 96 L500 181" fill="none" stroke="#ec6c35" stroke-width="8"/>
+      <path d="M392 105 L505 172" stroke="#ec6c35" stroke-width="4"/>
+      <path d="M392 105 L326 172" stroke="#ec6c35" stroke-width="4"/>
+      <rect x="311" y="160" width="38" height="22" rx="3" fill="#7391c7"/>
+      <circle cx="118" cy="351" r="24" fill="#f4b63f"/>
+      <path d="M90 377 Q116 356 141 378 L151 430 L84 430 Z" fill="#ec6c35"/>
+      <path d="M96 395 L62 424" stroke="#43566d" stroke-width="13" stroke-linecap="round"/>
+      <path d="M140 392 L178 366" stroke="#43566d" stroke-width="13" stroke-linecap="round"/>
+      <circle cx="66" cy="426" r="8" fill="#43566d"/><circle cx="180" cy="365" r="8" fill="#43566d"/>
+      <path d="M93 344 Q112 328 132 343" stroke="#f4b63f" stroke-width="12" stroke-linecap="round"/>
+      <circle cx="522" cy="270" r="19" fill="#6fb06b"/><rect x="518" y="287" width="8" height="35" fill="#6f8a63"/>
+      <circle cx="557" cy="281" r="22" fill="#75b76e"/><rect x="553" y="301" width="8" height="31" fill="#6f8a63"/>
+      <path d="M530 250 L530 214" stroke="#6f8a63" stroke-width="5"/>
+      <path d="M530 214 Q548 225 562 214" fill="none" stroke="#ec6c35" stroke-width="4"/>
+      <path d="M490 380 L490 323" stroke="#6f8a63" stroke-width="5"/><circle cx="490" cy="314" r="18" fill="#75b76e"/>
+      <g transform="translate(458 125)">
+        <path d="M0 0 C0-28 46-28 46 0 C46 25 23 44 23 44 C23 44 0 25 0 0Z" fill="#ec6c35"/>
+        <circle cx="23" cy="1" r="11" fill="#ffffff"/>
+      </g>
+    </svg>
+    <div class="hero-card">
+      <div class="mini-label">GET STARTED</div>
+      <div class="steps">
+        <div><b>01</b><span>Choose the location</span></div>
+        <div><b>02</b><span>Describe the problem</span></div>
+        <div><b>03</b><span>Add a photo if available</span></div>
+        <div><b>04</b><span>Track progress anytime</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="stats illustrated-stats"><div><b id="totalStat">1,248</b><span>Total reports</span></div><div><b>827</b><span>Resolved</span></div><div><b>214</b><span>In progress</span></div><div><b>207</b><span>Pending</span></div><div><b>24h</b><span>Latest update</span></div></section>
+<section id="map" class="map-section"><div class="section-head"><div><div class="eyebrow">LIVE ISSUE MAP</div><h2>Explore civic issues across Mumbai</h2></div><div class="filters"><button class="filter active" data-filter="all">All</button><button class="filter" data-filter="Roads">Roads</button><button class="filter" data-filter="Garbage">Garbage</button><button class="filter" data-filter="Water">Water</button><button class="filter" data-filter="Streetlight">Streetlights</button></div></div><div class="map-shell"><div id="mapCanvas"><div id="leafletMap" aria-label="Interactive Mumbai civic issue map"></div><div class="map-note"><b>OpenStreetMap • Mumbai</b><span>Click anywhere on the map to select a reporting location.</span></div></div><div class="issue-list" id="issueList"></div></div></section>
+<section id="report" class="report-section"><div class="section-head"><div><div class="eyebrow">CITIZEN REPORTING</div><h2>Report a problem in three steps</h2><p class="muted">Every report receives a unique ID and can be tracked from submission to resolution.</p></div></div><div class="report-grid"><div class="report-card"><div class="form-step"><span>1</span><div><h3>Choose location</h3><p>Search or place a pin anywhere within Mumbai.</p></div></div><div class="location-box"><div class="pin">⌖</div><div><b id="locationText">Andheri West, Mumbai</b><small>19.1364, 72.8296</small></div><button type="button" onclick="chooseReportLocation()">Select on map</button></div><div class="form-step"><span>2</span><div><h3>Describe the issue</h3><p>Add a clear heading, detailed description, category and responsible civic/government body.</p></div></div><label class="field-label">Issue heading</label><input id="issueTitle" class="text-input" maxlength="100" placeholder="Example: Large pothole near school entrance"/><label class="field-label">Detailed description</label><textarea id="description" maxlength="1000" placeholder="Explain what is happening, how it affects people, how long you have noticed it, and any important details..."></textarea><label class="field-label">What is the issue?</label><div class="category-grid"><button class="cat selected" data-cat="Pothole">🚧<span>Pothole</span></button><button class="cat" data-cat="Garbage">🗑️<span>Garbage</span></button><button class="cat" data-cat="Streetlight">💡<span>Streetlight</span></button><button class="cat" data-cat="Water">💧<span>Water / Drainage</span></button><button class="cat" data-cat="Footpath">🚶<span>Footpath</span></button><button class="cat" data-cat="Other">＋<span>Other</span></button></div><label class="field-label">Tag responsible civic / government body</label><select id="authoritySelect" class="text-input"><option value="BMC — Road / Infrastructure (configured by admin)">BMC — Road / Infrastructure</option><option value="BMC — Solid Waste Management (configured by admin)">BMC — Solid Waste Management</option><option value="BMC — Storm Water / Drainage (configured by admin)">BMC — Storm Water / Drainage</option><option value="BMC — Water Supply (configured by admin)">BMC — Water Supply</option><option value="BMC — Public / Street Infrastructure (configured by admin)">BMC — Public / Street Infrastructure</option><option value="Mumbai Traffic Police (traffic-related)">Mumbai Traffic Police (traffic-related)</option><option value="MSEDCL (electricity-related)">MSEDCL (electricity-related)</option><option value="Other / Not sure — admin routing required">Other / Not sure — admin routing required</option></select><div class="routing-hint">The selected body receives the report in its authority dashboard in this prototype. In the production version, routing rules should be maintained by an administrator using official jurisdiction data.</div><div class="form-step"><span>3</span><div><h3>Add photo evidence</h3><p>Upload up to 5 clear photographs of the problem.</p></div></div><label class="upload"><input id="photoInput" type="file" accept="image/jpeg,image/png,image/webp" multiple/><strong>＋ Add up to 5 photos</strong><span>JPG, PNG or WebP • maximum 5 photos</span></label><div id="previews" class="previews"></div><button class="primary full" onclick="submitComplaint()">Submit civic complaint →</button></div><aside class="routing-card"><div class="mini-label">SMART ROUTING</div><h3>Where will your complaint go?</h3><p>Your selected location + issue category are matched against the authority-routing database.</p><div class="route"><div><span>LOCATION</span><b>Andheri West</b></div><i>↓</i><div><span>WARD</span><b>K/West — demo</b></div><i>↓</i><div><span>ISSUE</span><b id="routeIssue">Pothole</b></div><i>↓</i><div class="authority"><span>RESPONSIBLE DEPARTMENT</span><b>Road Infrastructure</b><small>Authority routing is configurable by admin.</small></div></div><div class="ai-box"><div>✦ AI ASSISTANCE</div><b id="aiResult">Pothole detected · 94% confidence</b><span>AI suggestions remain editable by the citizen.</span></div></aside></div></section>
+<section id="dashboard" class="dashboard"><div class="section-head"><div><div class="eyebrow">MY CIVIC DASHBOARD</div><h2>Problems you have raised</h2><p class="muted">Your submitted complaints, selected locations, photos and current status appear here.</p></div><button class="secondary" onclick="toast('Export feature can be connected to a CSV/PDF reporting endpoint.')">Export report</button></div><div class="dashboard-tools"><button class="secondary small-btn" onclick="clearMyComplaints()">Remove all my complaints</button><span class="muted small-note">You can also remove individual complaints below.</span></div><div id="myReports" class="my-reports"></div><div class="section-head analytics-head"><div><div class="eyebrow">MUMBAI CIVIC ANALYTICS</div><h2>See where problems are concentrated</h2></div></div><div class="dash-grid"><div class="chart-card"><h3>Issues by category</h3><div class="bars"><div><span>Potholes</span><b style="width:86%">34%</b></div><div><span>Garbage</span><b style="width:56%">22%</b></div><div><span>Streetlights</span><b style="width:43%">16%</b></div><div><span>Drainage</span><b style="width:31%">12%</b></div><div><span>Water</span><b style="width:26%">10%</b></div><div><span>Other</span><b style="width:16%">6%</b></div></div></div><div class="chart-card"><h3>Resolution overview</h3><div class="donut"><div><strong>66%</strong><span>resolved</span></div></div><div class="legend"><span>● Resolved 827</span><span>● Active 421</span></div></div><div class="chart-card wide"><h3>Ward snapshot</h3><div class="table"><div class="tr th"><span>Ward</span><span>Reports</span><span>Resolved</span><span>Open</span></div><div class="tr"><span>A / South</span><span>182</span><span>131</span><span>51</span></div><div class="tr"><span>K / West</span><span>241</span><span>168</span><span>73</span></div><div class="tr"><span>H / West</span><span>205</span><span>143</span><span>62</span></div><div class="tr"><span>R / South</span><span>156</span><span>112</span><span>44</span></div></div></div></div></section>
+<section id="authority" class="authority-dashboard"><div class="section-head"><div><div class="eyebrow">BMC OFFICER DASHBOARD · DEMO</div><h2>Review, assign and update civic complaints</h2><p class="muted">New complaints are routed here automatically after a short simulated processing delay. The officer can verify the complaint, give field instructions, set an expected completion date, start work and mark it completed.</p></div><div class="authority-tools"><select id="authorityFilter" class="text-input" onchange="renderAuthorityInbox()"><option value="all">All departments</option><option value="BMC">BMC complaints</option><option value="Mumbai Traffic Police">Traffic Police</option><option value="MSEDCL">MSEDCL</option></select></div></div><div class="authority-process"><span>1. Citizen reports</span><span>→</span><span>2. BMC receives</span><span>→</span><span>3. Officer verifies</span><span>→</span><span>4. Instruction + deadline</span><span>→</span><span>5. Work</span><span>→</span><span>6. Citizen verifies</span></div><div id="authorityInbox" class="authority-inbox"></div></section><section id="tracking" class="tracking"><div><div class="eyebrow">TRACK A COMPLAINT</div><h2>Know what happened after you reported it.</h2><p>Follow every step from <b>Reported → Verified → Assigned → In Progress → Resolved → Citizen Verification → Closed.</b></p></div><div class="track-box"><input id="trackInput" placeholder="Enter complaint ID e.g. MUM-2026-001245"/><button class="primary" onclick="trackComplaint()">Track</button><div id="trackResult" class="track-result"></div></div></section>
+<section class="resolution"><div class="before"><div class="photo fake-road"><span>BEFORE</span><div class="pothole"></div></div></div><div class="resolution-copy"><div class="eyebrow">PROOF OF IMPROVEMENT</div><h2>Resolved means showing the difference.</h2><p>Authorities can upload an after-repair photo. Citizens can then confirm whether the issue was actually fixed.</p><div class="status-line"><span>✓ Authority marked resolved</span><span>→ Citizen verification</span></div><button class="secondary" onclick="toast('Citizen verification flow opened in the full application.')">Verify a repair</button></div><div class="after"><div class="photo fixed-road"><span>AFTER</span><div class="repair"></div></div></div></section>
+<section id="about" class="footer-cta"><div><div class="eyebrow">BUILT FOR MUMBAI</div><h2>One map. One complaint trail. More transparency.</h2><p>Designed as a final-year project prototype with OpenStreetMap, Leaflet, FastAPI, PostgreSQL/PostGIS and AI-assisted civic classification.</p></div><button class="primary" onclick="openReport()">Report an issue →</button></section>
+<footer><span>© 2026 CivicMap Mumbai — Academic prototype</span><span>Report • Track • Resolve • Verify</span></footer>
+</div>
+<div id="modal" class="modal"><div class="modal-box"><button class="close" onclick="closeModal()">×</button><div class="eyebrow">COMPLAINT CREATED</div><h2 id="modalTitle">Your report is on the map.</h2><p id="modalText"></p><div class="complaint-id" id="newId">MUM-2026-001246</div><div class="modal-routing" id="modalRouting"></div><div class="modal-actions"><button class="primary" onclick="closeModal();document.querySelector('#dashboard').scrollIntoView({behavior:'smooth'})">View dashboard</button><button class="secondary" onclick="closeModal()">Done</button></div></div></div><div id="toast" class="toast"></div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script src="app.js"></script>
+</body></html>
